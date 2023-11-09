@@ -10,12 +10,12 @@ const sequelizeService = {
   init: async () => {
     try {
       let connection = new Sequelize({
-        dialect: config.dialect,
-        port: config.dbPort,
-        host: config.dbHost,
-        username: config.dbUser,
-        password: config.dbPassword,
-        database: config.dbName,
+        dialect: config.database.dialect,
+        port: config.database.dbPort,
+        host: config.database.dbHost,
+        username: config.database.dbUser,
+        password: config.database.dbPassword,
+        database: config.database.dbName,
         define: {
           timestamps: true
         },
@@ -37,7 +37,7 @@ const sequelizeService = {
 
       // Only force sync in develop
       if (process.env.NODE_ENV === 'development') {
-        await connection.sync({ force: true });
+        // await connection.sync({ force: true });
       }
 
       console.log("[SEQUELIZE] Database service initialized");

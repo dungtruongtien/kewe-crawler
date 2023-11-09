@@ -6,15 +6,27 @@ class User extends Model {
       {
         name: Sequelize.STRING,
         email: Sequelize.STRING,
+        username: Sequelize.STRING,
+        password: Sequelize.STRING,
         dob: Sequelize.DATE,
       },
       {
         sequelize,
         timestamps: true, //If it's false do not add the attributes (updatedAt, createdAt).
-        tableName: 'Users' //Define table name
+        tableName: 'user' //Define table name
       }
     );
     return this;
+  }
+
+  static associate(models) {
+    this.hasMany(models.Auth, {
+      foreignKey: "userId",
+    });
+
+    this.hasMany(models.Keyword, {
+      foreignKey: "userId",
+    });
   }
 }
 

@@ -2,21 +2,25 @@ import express from 'express';
 import dotenv from 'dotenv';
 import config from './config/init';
 import sequelizeService from './client/db';
+import keywordRouter from './routes/keyword.route';
+import { initChannel } from './client/amqpClient/init';
 const logger = require('morgan');
 const cookieParser = require('cookie-parser');
 const cors = require('cors');
 
 dotenv.config();
 
-function bootstrap() {
+async function bootstrap() {
   // Init db connection
   sequelizeService.init();
+
+  await initChannel()
 }
 
 async function startApp() {
-  await bootstrap();
 
   const app = express();
+  await bootstrap(app);
 
   const corsOptions = {
     origin: 'http://localhost:8081',
@@ -31,6 +35,7 @@ async function startApp() {
   app.use(cors(corsOptions));
 
   app.use('/health-check', (req, res, next) => { console.log('health check') });
+  app.use('/keyword', keywordRouter);
 
   app.use((err, req, res, next) => {
     console.error(err.stack)
