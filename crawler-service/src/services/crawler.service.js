@@ -8,7 +8,6 @@ export const crawlerConsumer = async (keyword, userId) => {
 
   // Navigate to the URL
   await page.goto(`https://www.google.com/search?q=${keyword}`);
-  page.on('console', msg => console.log('PAGE LOG:', msg.text()));
 
   const result = await page.evaluate(() => {
     const result = {
@@ -80,16 +79,6 @@ export const crawlerConsumer = async (keyword, userId) => {
   try {
     // Save to database
     if (result.isDone) {
-      console.log('result----', result);
-      console.log('awiudjaijwfjawfa', {
-        userId,
-        totalAdWordsAdvertisers: result.sponsoredInfos.length,
-        adWordsAdvertisers: result.sponsoredInfos,
-        totalLinks: result.firstPageLinks.length,
-        links: result.firstPageLinks,
-        searchResult: result.resultStats,
-        // htmlStaticLink
-      })
       await Keyword.create({
         userId,
         totalAdWordsAdvertisers: result.sponsoredInfos.length,

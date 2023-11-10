@@ -1,22 +1,20 @@
 import amqplib from 'amqplib';
 import config from '../../config/init';
 
-export let RABBITMQ_CHANNEL = null;
+export let GLOBAL_MQ_CONN = null;
 
 export const connection = () => {
 	return amqplib.connect(`amqp://${config.messageQueue.amqpUser}:${config.messageQueue.amqpPassword}@${config.messageQueue.amqpHost}:${config.messageQueue.amqpPort}/`);
 }
 
-export const initChannel = async () => {
-	const conn = await connection();
-	RABBITMQ_CHANNEL = await conn.createChannel();
+export const initConnection = async () => {
+	GLOBAL_MQ_CONN = await connection();
 }
 
-export const pushToQueue = (queueName, msg) => {
-	RABBITMQ_CHANNEL.assertQueue(queueName, {
+export const pushToQueue = (ch, queueName, msg) => {
+	ch.assertQueue(queueName, {
 		durable: false
 	});
-
-	RABBITMQ_CHANNEL.sendToQueue(queueName, Buffer.from(msg));
+	ch.sendToQueue(queueName, Buffer.from(msg));
 	// console.log("Message sent");
 }
