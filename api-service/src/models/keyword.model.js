@@ -6,9 +6,12 @@ class Keyword extends Model {
       {
         userId: Sequelize.INTEGER,
         totalAdWordsAdvertisers: Sequelize.INTEGER,
+        adWordsAdvertisers: Sequelize.JSON,
         totalLinks: Sequelize.INTEGER,
-        searchResult: Sequelize.INTEGER,
+        links: Sequelize.JSON,
+        searchResult: Sequelize.STRING,
         htmlStaticLink: Sequelize.STRING,
+        keyword: Sequelize.STRING,
       },
       {
         sequelize,

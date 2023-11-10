@@ -13,8 +13,9 @@ export const initConnection = async () => {
 
 export const pushToQueue = (ch, queueName, msg) => {
 	ch.assertQueue(queueName, {
-		durable: false
+		durable: true,
 	});
-	ch.sendToQueue(queueName, Buffer.from(msg));
+	ch.sendToQueue(queueName, Buffer.from(msg), { persistent: true });
+
 	// console.log("Message sent");
 }

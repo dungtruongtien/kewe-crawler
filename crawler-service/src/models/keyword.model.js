@@ -9,8 +9,9 @@ class Keyword extends Model {
         adWordsAdvertisers: Sequelize.JSON,
         totalLinks: Sequelize.INTEGER,
         links: Sequelize.JSON,
-        searchResult: Sequelize.STRING,
+        searchResultStatistics: Sequelize.STRING,
         htmlStaticLink: Sequelize.STRING,
+        keyword: Sequelize.STRING,
       },
       {
         sequelize,
