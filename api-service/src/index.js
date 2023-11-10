@@ -3,7 +3,7 @@ import dotenv from 'dotenv';
 import config from './config/init';
 import sequelizeService from './client/db';
 import keywordRouter from './routes/keyword.route';
-import { initChannel } from './client/amqpClient/init';
+import { initChannel, initConnection } from './client/amqpClient/init';
 const logger = require('morgan');
 const cookieParser = require('cookie-parser');
 const cors = require('cors');
@@ -13,8 +13,7 @@ dotenv.config();
 async function bootstrap() {
   // Init db connection
   sequelizeService.init();
-
-  await initChannel()
+  await initConnection()
 }
 
 async function startApp() {
@@ -39,7 +38,7 @@ async function startApp() {
 
   app.use((err, req, res, next) => {
     console.error(err.stack)
-    res.status(err.statusCode).json({
+    res.json({
       error: err.error,
       message: err.message
     })
