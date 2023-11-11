@@ -1,9 +1,7 @@
 import { validator } from '../utils/validator';
-import { handleRegisterSV } from '../services/user.service';
+import { handleMeSV, handleRegisterSV } from '../services/user.service';
 
 export const handleRegisterCtr = async (req, res, next) => {
-  res.json({ msg: 'done' })
-  return;
   try {
     // Validate
     validateRegisterInput(req);
@@ -11,6 +9,22 @@ export const handleRegisterCtr = async (req, res, next) => {
     // Handle business logic
     const registerInput = req.body;
     const user = await handleRegisterSV(registerInput);
+    res.status(201).json({
+      data: 'Register successfully',
+      status: 'SUCCESS',
+      data: user
+    })
+
+  } catch (err) {
+    next(err);
+  }
+}
+
+export const handleMeCtl = async (req, res, next) => {
+  try {
+    // Handle business logic
+    const { user: { userId }} = res.locals;
+    const user = await handleMeSV(userId);
     res.status(201).json({
       data: 'Register successfully',
       status: 'SUCCESS',

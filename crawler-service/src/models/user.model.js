@@ -6,9 +6,8 @@ class User extends Model {
       {
         name: Sequelize.STRING,
         email: Sequelize.STRING,
-        username: Sequelize.STRING,
+        fullName: Sequelize.STRING,
         password: Sequelize.STRING,
-        dob: Sequelize.DATE,
       },
       {
         sequelize,
@@ -20,6 +19,10 @@ class User extends Model {
   }
 
   static associate(models) {
+    this.hasMany(models.Auth, {
+      foreignKey: "userId",
+    });
+
     this.hasMany(models.Keyword, {
       foreignKey: "userId",
     });

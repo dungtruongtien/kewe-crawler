@@ -1,9 +1,10 @@
 import jwt from 'jsonwebtoken';
 import bcrypt from 'bcrypt';
+import { addSeconds } from 'date-fns';
 import User from '../models/user.model';
 import Auth from '../models/auth.model';
 import { AuthenticationError, BusinessError, NotfoundError } from '../common/customError';
-import { AUTH_ACCESS_SERCRET_KEY, AUTH_REFRESH_SERCRET_KEY } from '../common/constant';
+import { ACCESS_TOKEN_EXPIRY_ON_SECOND, AUTH_ACCESS_SERCRET_KEY, AUTH_REFRESH_SERCRET_KEY, REFRESH_TOKEN_EXPIRY_ON_SECOND } from '../common/constant';
 
 export const handleLoginSV = async ({ email, password }) => {
   const existsUser = await User.findOne({ where: { email } });
@@ -16,8 +17,11 @@ export const handleLoginSV = async ({ email, password }) => {
     throw new BusinessError('Username or password is wrong', 'AuthenticationFailed');
   }
 
-  const accessToken = jwt.sign({ userId: existsUser.id, email, type: 'access' }, AUTH_ACCESS_SERCRET_KEY, { expiresIn: '30s' });
-  const refreshToken = jwt.sign({ userId: existsUser.id, type: 'refresh' }, AUTH_REFRESH_SERCRET_KEY, { expiresIn: '60s' });
+  const accessTokenExpiryIn = addSeconds(new Date(), ACCESS_TOKEN_EXPIRY_ON_SECOND).getTime();
+  const refreshTokenExpiryIn = addSeconds(new Date(), REFRESH_TOKEN_EXPIRY_ON_SECOND).getTime();
+
+  const accessToken = jwt.sign({ userId: existsUser.id, email, type: 'access' }, AUTH_ACCESS_SERCRET_KEY, { expiresIn: accessTokenExpiryIn });
+  const refreshToken = jwt.sign({ userId: existsUser.id, type: 'refresh' }, AUTH_REFRESH_SERCRET_KEY, { expiresIn: refreshTokenExpiryIn });
 
   await Auth.destroy({ where: { userId: existsUser.id } });
 
@@ -26,7 +30,7 @@ export const handleLoginSV = async ({ email, password }) => {
     refreshToken
   });
 
-  return { accessToken, refreshToken }
+  return { userId: existsUser.id, accessToken, accessTokenExpiryIn, refreshToken, refreshTokenExpiryIn }
 }
 
 
@@ -36,23 +40,23 @@ export const handleRefreshTokenSV = async ({ refreshToken, userId }) => {
     if (error) {
       if (error.name === 'TokenExpiredError') {
         await Auth.destroy({ where: { userId } });
-        throw new BusinessError('Token is expired', 'TokenExpiredError');
+        throw new AuthenticationError('Token is expired', 'TokenExpiredError');
       }
       
-      throw new BusinessError('Invalid token')
+      throw new AuthenticationError('Invalid token')
     }
     
     if (!decoded.userId) {
-      throw new BusinessError('Invalid token');
+      throw new AuthenticationError('Invalid token');
     }
 
     const existedRefreshToken = await Auth.findOne({ where: { userId: decoded.userId } });
     if (!existedRefreshToken) {
-      throw new BusinessError('Invalid token');
+      throw new AuthenticationError('Invalid token');
     }
 
     if (existedRefreshToken.refreshToken !== refreshToken) {
-      throw new BusinessError('Invalid token');
+      throw new AuthenticationError('Invalid token');
     }
 
     const existsUser = await User.findOne({ where: { id: decoded.userId } });

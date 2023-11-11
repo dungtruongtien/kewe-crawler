@@ -1,28 +1,23 @@
-import React, { useContext, useEffect } from 'react'
+import React, { useContext } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
 
 import '../../App.css'
 import { AuthContext } from '../../App';
+import { login } from '../../services/auth.service';
 
 export default function LoginPage() {
-    const { userInfo, setUserInfo } = useContext(AuthContext);
-    console.log('userInfo------', userInfo);
+    const { setUserInfo } = useContext(AuthContext);
     const navigate = useNavigate();
-    const handleLoginSubmit = (e) => {
+    const handleLoginSubmit = async (e) => {
         e.preventDefault();
-
-        console.log(e.target.email.value);
-        console.log(e.target.password.value);
+        const email = e.target.email.value;
+        const password = e.target.password.value;
+        const data = await login({ email, password });
         setUserInfo({
-            email: e.target.email.value,
+            userId: data.userId,
         });
-        console.log('here------')
         navigate('/home')
     }
-
-    // useEffect(() => {
-    //     navigate('/home');
-    // }, [userInfo])
 
     return (
         <div className="text-center m-5-auto">

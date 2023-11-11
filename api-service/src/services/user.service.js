@@ -18,3 +18,16 @@ export const handleRegisterSV = async ({ email, password, fullName }) => {
   const user = await User.create(userInput);
   return user;
 }
+
+
+export const handleMeSV = async (userId) => {
+  const userData = await User.findOne({ 
+    where: { id: userId } ,
+    attributes: ['email', 'fullName', 'name', 'id']
+  });
+  if (!userData) {
+    throw new BusinessError('User not existed', 'UserNotFound');
+  }
+
+  return userData;
+}

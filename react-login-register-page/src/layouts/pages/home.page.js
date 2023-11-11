@@ -3,7 +3,7 @@ import { Link } from 'react-router-dom'
 import { AuthContext } from '../../App';
 
 export default function HomePage() {
-    const { userInfo, setUserInfo } = useContext(AuthContext);
+    const { userInfo } = useContext(AuthContext);
     console.log('userInfo----', userInfo);
     return (
         <div className="text-center">

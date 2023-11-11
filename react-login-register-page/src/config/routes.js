@@ -1,6 +1,6 @@
 import React from 'react';
 
-import HomePage from "../layouts/pages/HomePage";
+import HomePage from "../layouts/pages/home.page";
 
 export const protectedRoutes = [
   {

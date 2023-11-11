@@ -8,7 +8,6 @@ class User extends Model {
         email: Sequelize.STRING,
         fullName: Sequelize.STRING,
         password: Sequelize.STRING,
-        dob: Sequelize.DATE,
       },
       {
         sequelize,
