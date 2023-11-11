@@ -1,5 +1,4 @@
-import { connect, initChannel } from "./client/amqpClient/init";
-import sequelizeService from "./client/db";
+import sequelizeService from "./client/db.client";
 import { crawlerConsumer } from "./services/crawler.service";
 var amqp = require('amqplib/callback_api');
 

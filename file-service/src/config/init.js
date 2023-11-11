@@ -2,8 +2,7 @@ import dotenv from 'dotenv';
 dotenv.config();
 
 export default {
-  port: process.env.PORT || 8081,
-  fileServerHost: process.env.FILE_SERVER_HOST,
+  port: process.env.PORT || 8082,
   database: {
     dialect: process.env.DB_DIALECT,
     dbHost: process.env.DB_HOST,
