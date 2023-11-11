@@ -8,7 +8,9 @@ import config from './config/init';
 import sequelizeService from './client/db';
 import keywordRouter from './routes/keyword.route';
 import userRouter from './routes/user.route';
+import authRouter from './routes/auth.route';
 import { initConnection } from './client/amqpClient/init';
+import { authenticate } from './middlewares/auth.middleware';
 
 dotenv.config();
 
@@ -36,8 +38,9 @@ async function startApp() {
   app.use(cors(corsOptions));
 
   app.use('/health-check', (req, res, next) => { console.log('health check') });
-  app.use('/keyword', keywordRouter);
-  app.use('/user', userRouter);
+  app.use('/keyword', authenticate, keywordRouter);
+  app.use('/user', authenticate, userRouter);
+  app.use('/auth', authRouter);
 
   app.use((err, req, res, next) => {
     //TODO: Handler logger for error level

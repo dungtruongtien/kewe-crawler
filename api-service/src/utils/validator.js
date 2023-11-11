@@ -1,6 +1,14 @@
 import { ValidationError } from "../common/customError";
 
 export const validator = {
+  number: {
+    isNumber: (value, fieldName) => {
+      if (value && isNaN(value)) {
+        throw new ValidationError(`${fieldName} must be number`);
+      }
+      return true;
+    },
+  },
   string: {
     isString: (value, fieldName) => {
       if (value && typeof value !== 'string') {

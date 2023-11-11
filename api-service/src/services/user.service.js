@@ -10,7 +10,6 @@ export const handleRegisterSV = async ({ email, password, fullName }) => {
 
   var salt = bcrypt.genSaltSync(10);
   const hashedPassword = bcrypt.hashSync(password, salt);
-  console.log('hashedPassword-----', hashedPassword);
   const userInput = {
     email,
     fullName,

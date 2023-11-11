@@ -2,6 +2,8 @@ import { validator } from '../utils/validator';
 import { handleRegisterSV } from '../services/user.service';
 
 export const handleRegisterCtr = async (req, res, next) => {
+  res.json({ msg: 'done' })
+  return;
   try {
     // Validate
     validateRegisterInput(req);

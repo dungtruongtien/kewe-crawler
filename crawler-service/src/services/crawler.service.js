@@ -16,7 +16,6 @@ export const crawlerConsumer = async (keyword, userId) => {
   const html = await page.content();
   // Handle upload file to file service and get path
   const uploadPath = await uploadFile(userId, html);
-  console.log('uploadPath----', uploadPath);
 
   // Preocess HTML dom to get crawler info
   const result = await page.evaluate(async () => {
@@ -115,6 +114,5 @@ const uploadFile = async (userId, html) => {
   };
 
   const response = await axios.request(requestConfig);
-  console.log('response.data.data.path-----', response.data.data);
   return response.data.data.path;
 }
