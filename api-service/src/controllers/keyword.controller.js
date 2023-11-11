@@ -1,5 +1,5 @@
 import { validator } from '../utils/validator';
-import { handleKeywordCrawlerSv } from '../services/keyword.service';
+import { handleKeywordCrawlerSv, handleListKeywordSv } from '../services/keyword.service';
 
 export const handleKeywordCrawlerCtr = async (req, res, next) => {
   try {
@@ -12,6 +12,22 @@ export const handleKeywordCrawlerCtr = async (req, res, next) => {
     res.status(200).json({
       message: 'Your list of keyword is crawling',
       status: 'SUCCESS'
+    })
+
+  } catch (err) {
+    next(err);
+  }
+}
+
+export const handleListKeywordCtr = async (req, res, next) => {
+  try {
+    // Handle business logic
+    //TODO: always filter by userId
+    const listKeywords = await handleListKeywordSv();
+
+    res.json({
+      status: 'SUCCESS',
+      data: listKeywords
     })
 
   } catch (err) {

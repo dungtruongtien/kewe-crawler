@@ -1,3 +1,4 @@
+import Keyword from '../models/keyword.model';
 import { GLOBAL_MQ_CONN, pushToQueue } from '../client/amqpClient/init';
 
 export const handleKeywordCrawlerSv = async (listKeywords) => {
@@ -16,4 +17,13 @@ export const handleKeywordCrawlerSv = async (listKeywords) => {
     })
   });
   await Promise.all(promiseAll);
+}
+
+
+export const handleListKeywordSv = async (listKeywords) => {
+  return Keyword.findAll({
+    where: {
+      userId: 3
+    }
+  });
 }
