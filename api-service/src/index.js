@@ -26,7 +26,7 @@ async function startApp() {
   await bootstrap(app);
 
   const corsOptions = {
-    origin: 'http://localhost:8081',
+    origin: 'http://localhost:3000',
   };
 
   app.use(logger('dev'));
@@ -38,9 +38,9 @@ async function startApp() {
   app.use(cors(corsOptions));
 
   app.use('/health-check', (req, res, next) => { console.log('health check') });
-  app.use('/keyword', authenticate, keywordRouter);
-  app.use('/user', authenticate, userRouter);
-  app.use('/auth', authRouter);
+  app.use('/api/keyword/v1', authenticate, keywordRouter);
+  app.use('/api/user/v1', authenticate, userRouter);
+  app.use('/api/auth/v1', authRouter);
 
   app.use((err, req, res, next) => {
     //TODO: Handler logger for error level

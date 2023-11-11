@@ -1,10 +1,10 @@
 import express from 'express';
-import { handleRegisterCtr } from '../controllers/user.controller';
+import { handleMeCtl, handleRegisterCtr } from '../controllers/user.controller';
 const router = express.Router();
 
 router.post('/register', handleRegisterCtr)
 
-// router.get('/me', handleListKeywordCtr)
+router.get('/me', handleMeCtl)
 
 
 export default router;
