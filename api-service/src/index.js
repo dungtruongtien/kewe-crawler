@@ -1,12 +1,16 @@
 import express from 'express';
 import dotenv from 'dotenv';
+import logger from 'morgan';
+import cookieParser from 'cookie-parser';
+import cors from 'cors';
+
 import config from './config/init';
 import sequelizeService from './client/db';
 import keywordRouter from './routes/keyword.route';
-import { initChannel, initConnection } from './client/amqpClient/init';
-const logger = require('morgan');
-const cookieParser = require('cookie-parser');
-const cors = require('cors');
+import userRouter from './routes/user.route';
+import authRouter from './routes/auth.route';
+import { initConnection } from './client/amqpClient/init';
+import { authenticate } from './middlewares/auth.middleware';
 
 dotenv.config();
 
@@ -34,12 +38,23 @@ async function startApp() {
   app.use(cors(corsOptions));
 
   app.use('/health-check', (req, res, next) => { console.log('health check') });
-  app.use('/keyword', keywordRouter);
+  app.use('/keyword', authenticate, keywordRouter);
+  app.use('/user', authenticate, userRouter);
+  app.use('/auth', authRouter);
 
   app.use((err, req, res, next) => {
-    console.error(err.stack)
-    res.json({
-      error: err.error,
+    //TODO: Handler logger for error level
+    if(config.nodeEnv === 'development') {
+      console.log(err)
+    }
+
+    if(!err.status || err.status >= 500 && err.status <= 599) {
+      err.status = 500;
+      err.name = 'INTERNAL_ERROR';
+      err.message = 'Internal error';
+    }
+    res.status(err.status).json({
+      name: err.name,
       message: err.message
     })
   })
