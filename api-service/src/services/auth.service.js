@@ -25,27 +25,33 @@ export const handleLoginSV = async ({ email, password }) => {
 
   await Auth.destroy({ where: { userId: existsUser.id } });
 
-  await Auth.create({
-    userId: existsUser.id,
-    refreshToken
-  });
+  await Auth.upsert(
+    {
+      userId: existsUser.id,
+    },
+    { refreshToken }
+  );
 
   return { userId: existsUser.id, accessToken, accessTokenExpiryIn, refreshToken, refreshTokenExpiryIn }
+}
+
+export const handleLogoutSV = async (userId) => {
+  return Auth.destroy({ where: { id: userId } });
 }
 
 
 export const handleRefreshTokenSV = async ({ refreshToken, userId }) => {
   return jwt.verify(refreshToken, AUTH_REFRESH_SERCRET_KEY, async (error, decoded) => {
-    
+
     if (error) {
       if (error.name === 'TokenExpiredError') {
         await Auth.destroy({ where: { userId } });
         throw new AuthenticationError('Token is expired', 'TokenExpiredError');
       }
-      
+
       throw new AuthenticationError('Invalid token')
     }
-    
+
     if (!decoded.userId) {
       throw new AuthenticationError('Invalid token');
     }
