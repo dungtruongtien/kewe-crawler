@@ -1,37 +1,31 @@
 import React from 'react';
 import Table from 'react-bootstrap/Table';
 
-export function KWTable() {
-
-  function handleHTMLOnClick() {
-    const popupWidth = 1000;
-    const popupHeight = 1000;
-    const left = (window.innerWidth - popupWidth) / 2;
-    const top = (window.innerHeight - popupHeight) / 2;
-  
-    // Define the window features, including size and position.
-    const features = `width=${1000},height=${1000},left=${left},top=${top},resizable=yes,scrollbars=yes,toolbar=no,location=no`;
-  
-    window.open('http://localhost:8082/1_1699632398688.html', 'windowName', features);
-  }
-
+export function KWTable({ columns, data, isLoading = false }) {
   return (
-    <Table responsive>
+    <Table className={isLoading && 'loading'} responsive>
       <thead>
         <tr>
-          {Array.from({ length: 5 }).map((_, index) => (
-            <th key={index}>Table heading</th>
+          <th></th>
+          {columns.map((column, index) => (
+            <th key={index}>{column.text}</th>
           ))}
         </tr>
       </thead>
       <tbody>
-        <tr>
-          <td>1</td>
-          <td style={{ cursor: 'pointer' }} onClick={handleHTMLOnClick}>HTML click me</td>
-          {Array.from({ length: 3 }).map((_, index) => (
-            <td key={index}>Table cell {index}</td>
-          ))}
-        </tr>
+        {data.map((value, idx) => (
+          <tr key={idx}>
+            <td>{idx + 1}</td>
+            {columns.map((column, index) => {
+              if(column.render) {
+                return <td key={index}>{column.render(value[column.data])}</td>
+              }              
+              return (
+                <td key={index}>{value[column.data]}</td>
+              )
+            })}
+          </tr>
+        ))}
       </tbody>
     </Table>
   );

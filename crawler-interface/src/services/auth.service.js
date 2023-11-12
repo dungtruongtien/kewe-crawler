@@ -9,8 +9,8 @@ export const login = async ({ email, password }) => {
   const accessTokenExpiryIn = response.data.data.accessTokenExpiryIn;
   const userId = response.data.data.userId;
   localStorage.setItem('accessToken', accessToken);
-  localStorage.setItem('refreshToken', refreshToken);
   localStorage.setItem('accessTokenExpiryIn', accessTokenExpiryIn);
+  localStorage.setItem('refreshToken', refreshToken);
   localStorage.setItem('userId', userId);
   return response.data.data;
 }

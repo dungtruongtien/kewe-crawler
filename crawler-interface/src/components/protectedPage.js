@@ -8,11 +8,9 @@ import { me } from '../services/user.service';
 export function ProtectedPage({ children }) {
 	const { userInfo, setUserInfo } = useContext(AuthContext);
 	const userId = localStorage.getItem('userId');
-	console.log('userInfo in ProtectedPage--------', userInfo, userId);
 
 	useEffect(() => {
 		if (!userInfo) {
-			console.log('run APP')
 			me().then((data) => {
 				setUserInfo(data);
 			});

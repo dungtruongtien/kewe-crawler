@@ -20,16 +20,16 @@ export const handleLoginSV = async ({ email, password }) => {
   const accessTokenExpiryIn = addSeconds(new Date(), ACCESS_TOKEN_EXPIRY_ON_SECOND).getTime();
   const refreshTokenExpiryIn = addSeconds(new Date(), REFRESH_TOKEN_EXPIRY_ON_SECOND).getTime();
 
-  const accessToken = jwt.sign({ userId: existsUser.id, email, type: 'access' }, AUTH_ACCESS_SERCRET_KEY, { expiresIn: accessTokenExpiryIn });
-  const refreshToken = jwt.sign({ userId: existsUser.id, type: 'refresh' }, AUTH_REFRESH_SERCRET_KEY, { expiresIn: refreshTokenExpiryIn });
+  const accessToken = jwt.sign({ userId: existsUser.id, email, type: 'access' }, AUTH_ACCESS_SERCRET_KEY, { expiresIn: ACCESS_TOKEN_EXPIRY_ON_SECOND });
+  const refreshToken = jwt.sign({ userId: existsUser.id, type: 'refresh' }, AUTH_REFRESH_SERCRET_KEY, { expiresIn: REFRESH_TOKEN_EXPIRY_ON_SECOND });
 
   await Auth.destroy({ where: { userId: existsUser.id } });
 
   await Auth.upsert(
     {
       userId: existsUser.id,
+      refreshToken
     },
-    { refreshToken }
   );
 
   return { userId: existsUser.id, accessToken, accessTokenExpiryIn, refreshToken, refreshTokenExpiryIn }
@@ -70,8 +70,10 @@ export const handleRefreshTokenSV = async ({ refreshToken, userId }) => {
       throw new NotfoundError('User not existed', 'UserNotFound');
     }
 
-    const accessToken = jwt.sign({ userId: decoded.userId, email: existsUser.email, type: 'access' }, AUTH_ACCESS_SERCRET_KEY, { expiresIn: '10s' });
+    const accessTokenExpiryIn = addSeconds(new Date(), ACCESS_TOKEN_EXPIRY_ON_SECOND).getTime();
 
-    return accessToken;
+    const accessToken = jwt.sign({ userId: decoded.userId, email: existsUser.email, type: 'access' }, AUTH_ACCESS_SERCRET_KEY, { expiresIn: ACCESS_TOKEN_EXPIRY_ON_SECOND });
+
+    return { accessToken, accessTokenExpiryIn };
   });
 }

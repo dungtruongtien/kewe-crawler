@@ -45,12 +45,21 @@ export const validator = {
       }
       return true;
     },
+    isArray: (value, fieldName) => {
+      if(!Array.isArray(value)) {
+        throw new ValidationError(`${fieldName} must be an array`);
+      }
+      return true;
+    },
     eachString: (arr) => {
-      for (let i = 0; i < arr.length; i++) {
-        if (typeof arr[i] !== 'string') {
-          throw new ValidationError('Each element in array must be string');
+      if (arr) {
+        for (let i = 0; i < arr.length; i++) {
+          if (typeof arr[i] !== 'string') {
+            throw new ValidationError('Each element in array must be string');
+          }
         }
       }
+      return true;
     }
   }
 }

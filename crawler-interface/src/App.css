@@ -214,6 +214,24 @@ form span {
     justify-content: right;
 }
 
+.kw-table table.loading tbody {
+    position: relative;
+}
+
+.kw-table table.loading tbody:after {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: rgba(0, 0, 0, 0.1);
+    background-image: url('/spinner.gif');
+    background-position: center;
+    background-repeat: no-repeat;
+    background-size: 50px 50px;
+    content: "";
+}
+
 .upload-wrapper input::file-selector-button {
     font-weight: bold;
     color: dodgerblue;

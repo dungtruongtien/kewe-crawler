@@ -1,18 +1,18 @@
-import React from 'react';
+import React, { useState } from 'react';
 import Pagination from 'react-bootstrap/Pagination';
 
 
-function KWPagination() {
-  let active = 2;
-  const items = [<Pagination.Item key={-2}>{'<<'}</Pagination.Item>];
-  for (let number = 1; number <= 5; number++) {
+function KWPagination({ handleChangePage, pageInfo }) {
+  console.log('pageInfo----', pageInfo);
+  const items = [<Pagination.Item value={-2} onClick={handleChangePage} key={-2}>{'<<'}</Pagination.Item>];
+  for (let number = 1; number <= pageInfo.totalPagination; number++) {
     items.push(
-      <Pagination.Item key={number} active={number === active}>
+      <Pagination.Item onClick={handleChangePage} value={number} key={number} active={number === pageInfo.currentPage}>
         {number}
       </Pagination.Item>,
     );
   }
-  items.push(<Pagination.Item key={-1}>{'>>'}</Pagination.Item>);
+  items.push(<Pagination.Item onClick={handleChangePage} value={-1} key={-1}>{'>>'}</Pagination.Item>);
   return (
     <Pagination>{items}</Pagination>
 

@@ -19,10 +19,6 @@ class User extends Model {
   }
 
   static associate(models) {
-    this.hasMany(models.Auth, {
-      foreignKey: "userId",
-    });
-
     this.hasMany(models.Keyword, {
       foreignKey: "userId",
     });

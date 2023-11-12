@@ -1,7 +1,7 @@
 import Keyword from '../models/keyword.model';
 import { GLOBAL_MQ_CONN, pushToQueue } from '../client/amqpClient/init';
 
-export const handleKeywordCrawlerSv = async (listKeywords) => {
+export const handleKeywordCrawlerSv = async ({ listKeywords, userId }) => {
   // Push to redis for tracking
   // Loop all listKeywords
   //  Push to queue
@@ -10,7 +10,7 @@ export const handleKeywordCrawlerSv = async (listKeywords) => {
     return new Promise((resolve, reject) => {
       const message = {
         keyword,
-        userId: 1
+        userId
       }
       pushToQueue(mqChannel, 'keyword_crawling', JSON.stringify(message));
       resolve('DONE');
@@ -20,10 +20,15 @@ export const handleKeywordCrawlerSv = async (listKeywords) => {
 }
 
 
-export const handleListKeywordSv = async (listKeywords) => {
-  return Keyword.findAll({
-    where: {
-      userId: 3
-    }
+export const handleListKeywordSv = async ({ userId, limit = 5, offset = 0, attributes }) => {
+  const filter = {
+    userId,
+  }
+  return Keyword.findAndCountAll({
+    where: filter,
+    order: [['id', 'DESC']],
+    attributes,
+    limit,
+    offset
   });
 }
