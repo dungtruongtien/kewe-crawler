@@ -6,6 +6,7 @@ import RegisterPage from './layouts/pages/register.page'
 import LoginPage from './layouts/pages/login.page'
 import './App.css'
 
+
 export const AuthContext = createContext();
 
 export default function App() {

@@ -4,7 +4,10 @@ class Auth extends Model {
   static init(sequelize) {
     super.init(
       {
-        userId: Sequelize.INTEGER,
+        userId: {
+          type: Sequelize.INTEGER,
+          unique: true,
+        },
         refreshToken: Sequelize.STRING,
       },
       {

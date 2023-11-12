@@ -7,8 +7,9 @@ export const handleKeywordCrawlerCtr = async (req, res, next) => {
     validateKeywordCrawlerInput(req);
 
     // Handle business logic
+    const { userId } = res.locals.user;
     const { listKeywords } = req.body;
-    await handleKeywordCrawlerSv(listKeywords);
+    await handleKeywordCrawlerSv({ listKeywords, userId });
     res.status(200).json({
       message: 'Your list of keyword is crawling',
       status: 'SUCCESS'
@@ -21,9 +22,21 @@ export const handleKeywordCrawlerCtr = async (req, res, next) => {
 
 export const handleListKeywordCtr = async (req, res, next) => {
   try {
-    // Handle business logic
-    //TODO: always filter by userId
-    const listKeywords = await handleListKeywordSv();
+    // Handle validation
+    validateListKeywordInput(req);
+
+    const { userId } = res.locals.user;
+    const { attributes: attributesQuery, limit, page } = req.query;
+    let offset = 0;
+    if (page) {
+      offset = (page - 1) * limit;
+    }
+    let attributes = undefined;
+    if (attributesQuery) {
+      //TODO: Handle validate enum with Keyword column
+      attributes = attributesQuery.split(',');
+    }
+    const listKeywords = await handleListKeywordSv({ userId, attributes, limit, offset });
 
     res.json({
       status: 'SUCCESS',
@@ -44,4 +57,11 @@ const validateKeywordCrawlerInput = (req) => {
   validator.array.minLen(listKeywords, 0);
   validator.array.maxLen(listKeywords, 100);
   validator.array.eachString(listKeywords);
+}
+
+
+const validateListKeywordInput = (req) => {
+  const { limit, page } = req.query;
+  validator.number.isNumber(limit, 'limit');
+  validator.number.isNumber(page, 'offset');
 }

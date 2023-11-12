@@ -20,32 +20,38 @@ export const handleLoginSV = async ({ email, password }) => {
   const accessTokenExpiryIn = addSeconds(new Date(), ACCESS_TOKEN_EXPIRY_ON_SECOND).getTime();
   const refreshTokenExpiryIn = addSeconds(new Date(), REFRESH_TOKEN_EXPIRY_ON_SECOND).getTime();
 
-  const accessToken = jwt.sign({ userId: existsUser.id, email, type: 'access' }, AUTH_ACCESS_SERCRET_KEY, { expiresIn: accessTokenExpiryIn });
-  const refreshToken = jwt.sign({ userId: existsUser.id, type: 'refresh' }, AUTH_REFRESH_SERCRET_KEY, { expiresIn: refreshTokenExpiryIn });
+  const accessToken = jwt.sign({ userId: existsUser.id, email, type: 'access' }, AUTH_ACCESS_SERCRET_KEY, { expiresIn: ACCESS_TOKEN_EXPIRY_ON_SECOND });
+  const refreshToken = jwt.sign({ userId: existsUser.id, type: 'refresh' }, AUTH_REFRESH_SERCRET_KEY, { expiresIn: REFRESH_TOKEN_EXPIRY_ON_SECOND });
 
   await Auth.destroy({ where: { userId: existsUser.id } });
 
-  await Auth.create({
-    userId: existsUser.id,
-    refreshToken
-  });
+  await Auth.upsert(
+    {
+      userId: existsUser.id,
+      refreshToken
+    },
+  );
 
   return { userId: existsUser.id, accessToken, accessTokenExpiryIn, refreshToken, refreshTokenExpiryIn }
+}
+
+export const handleLogoutSV = async (userId) => {
+  return Auth.destroy({ where: { id: userId } });
 }
 
 
 export const handleRefreshTokenSV = async ({ refreshToken, userId }) => {
   return jwt.verify(refreshToken, AUTH_REFRESH_SERCRET_KEY, async (error, decoded) => {
-    
+
     if (error) {
       if (error.name === 'TokenExpiredError') {
         await Auth.destroy({ where: { userId } });
         throw new AuthenticationError('Token is expired', 'TokenExpiredError');
       }
-      
+
       throw new AuthenticationError('Invalid token')
     }
-    
+
     if (!decoded.userId) {
       throw new AuthenticationError('Invalid token');
     }
@@ -64,8 +70,10 @@ export const handleRefreshTokenSV = async ({ refreshToken, userId }) => {
       throw new NotfoundError('User not existed', 'UserNotFound');
     }
 
-    const accessToken = jwt.sign({ userId: decoded.userId, email: existsUser.email, type: 'access' }, AUTH_ACCESS_SERCRET_KEY, { expiresIn: '10s' });
+    const accessTokenExpiryIn = addSeconds(new Date(), ACCESS_TOKEN_EXPIRY_ON_SECOND).getTime();
 
-    return accessToken;
+    const accessToken = jwt.sign({ userId: decoded.userId, email: existsUser.email, type: 'access' }, AUTH_ACCESS_SERCRET_KEY, { expiresIn: ACCESS_TOKEN_EXPIRY_ON_SECOND });
+
+    return { accessToken, accessTokenExpiryIn };
   });
 }

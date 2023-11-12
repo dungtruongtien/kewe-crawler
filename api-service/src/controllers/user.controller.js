@@ -25,7 +25,7 @@ export const handleMeCtl = async (req, res, next) => {
     // Handle business logic
     const { user: { userId }} = res.locals;
     const user = await handleMeSV(userId);
-    res.status(201).json({
+    res.status(200).json({
       data: 'Register successfully',
       status: 'SUCCESS',
       data: user

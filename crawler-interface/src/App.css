@@ -62,12 +62,12 @@ body {
 }
 
 #reg_btn:hover span {
-  padding-right: 25px;
+    padding-right: 25px;
 }
 
 #reg_btn:hover span:after {
-  opacity: 1;
-  right: 0;
+    opacity: 1;
+    right: 0;
 }
 
 /***    Login Page     ***/
@@ -153,4 +153,95 @@ form span {
 
 .login-input-wrapper label {
     margin-right: 1rem;
+}
+
+.header-wrapper {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0 1rem 0 1rem;
+    background-color: #8d949e;
+}
+
+.header-wrapper .brand a {
+    color: black;
+    font-size: 1.5rem;
+    text-decoration: none;
+}
+
+.avatar-wrapper img {
+    border-radius: 50%;
+    height: 50px;
+    width: 50px;
+}
+
+.avatar-wrapper button {
+    background-color: transparent;
+    border: none;
+}
+
+.avatar-wrapper button:hover {
+    background-color: transparent;
+    border: none;
+}
+
+.card-wrapper {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.card-wrapper .card-report {
+    margin: 0 1rem 0 0;
+}
+
+.kw-table-wrapper {
+    margin: 1rem 0 0 0;
+}
+
+.kw-table-wrapper .visually-hidden {
+    display: none;
+}
+
+.kw-table-wrapper .kw-table {
+    padding: 10px;
+    box-shadow: 5px 4px #888888;
+}
+
+.kw-table-wrapper .kw-pagination-wrapper {
+    margin: 1rem 0 0 0;
+    display: flex;
+    justify-content: right;
+}
+
+.kw-table table.loading tbody {
+    position: relative;
+}
+
+.kw-table table.loading tbody:after {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: rgba(0, 0, 0, 0.1);
+    background-image: url('/spinner.gif');
+    background-position: center;
+    background-repeat: no-repeat;
+    background-size: 50px 50px;
+    content: "";
+}
+
+.upload-wrapper input::file-selector-button {
+    font-weight: bold;
+    color: dodgerblue;
+    padding: 0.5em;
+    border: thin solid grey;
+    border-radius: 3px;
+}
+
+.upload-wrapper {
+    display: flex;
+    justify-content: right;
+    align-items: center;
 }

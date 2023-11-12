@@ -15,7 +15,6 @@ export const authenticate = (req, res, next) => {
 
       throw new AuthenticationError('Authentication failed')
     }
-    console.log('decoded----', decoded);
     res.locals.user = decoded;
     next();
   });

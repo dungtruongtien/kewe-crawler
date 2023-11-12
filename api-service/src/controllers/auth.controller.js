@@ -1,5 +1,5 @@
 import { validator } from '../utils/validator';
-import { handleLoginSV, handleRefreshTokenSV } from '../services/auth.service';
+import { handleLoginSV, handleLogoutSV, handleRefreshTokenSV } from '../services/auth.service';
 import { ValidationError } from '../common/customError';
 
 export const handleLoginCtl = async (req, res, next) => {
@@ -20,6 +20,23 @@ export const handleLoginCtl = async (req, res, next) => {
   }
 }
 
+export const handleLogoutCtl = async (req, res, next) => {
+  try {
+    // Validate
+    validateLogoutInput(req);
+
+    // Handle business logic
+    const { userId } = req.body;
+    const token = await handleLogoutSV(userId);
+    res.status(200).json({
+      status: 'SUCCESS'
+    });
+
+  } catch (err) {
+    next(err);
+  }
+}
+
 
 export const handleRefreshTokenCtl = async (req, res, next) => {
   try {
@@ -28,7 +45,7 @@ export const handleRefreshTokenCtl = async (req, res, next) => {
 
     // Handle business logic
     const { refreshToken, userId } = req.body;
-    const token = await handleRefreshTokenSV({refreshToken, userId});
+    const token = await handleRefreshTokenSV({ refreshToken, userId });
     res.status(200).json({
       status: 'SUCCESS',
       data: token
@@ -49,6 +66,16 @@ const validateLoginInput = (req) => {
   validator.string.isString(email, 'email');
   validator.string.isString(password, 'password');
   validator.string.isEmail(email);
+}
+
+
+const validateLogoutInput = (req) => {
+  if (!req.body) {
+    throw new ValidationError('Missing body input');
+  }
+  validator.obj.required(req.body, 'userId');
+  const { userId } = req.body;
+  validator.number.isNumber(userId);
 }
 
 
