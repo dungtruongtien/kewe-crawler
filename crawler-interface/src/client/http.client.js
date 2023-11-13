@@ -1,17 +1,21 @@
 import axios from 'axios';
+import { format, subMinutes, diff } from 'date-fns';
 
 const API_PUBLIC_PATHS = ['/auth/v1/token/access', '/auth/v1/token/login', '/auth/v1/token/logout']
 
 const instance = axios.create({
   baseURL: `${process.env.REACT_APP_API_SERVICE}/api/`,
   timeout: 1000,
-  headers: { 'x-access-token': localStorage.getItem('accessToken') }
 });
 
 instance.interceptors.request.use(async (config) => {
+  config.headers['x-access-token'] = localStorage.getItem('accessToken');
   // Do something before request is sent
   const accessTokenExpiryIn = localStorage.getItem('accessTokenExpiryIn');
-  if (!API_PUBLIC_PATHS.includes(config.url) && (new Date().getTime() >= new Date(parseInt(accessTokenExpiryIn)).getTime())) {
+  const now = new Date();
+  const accessTokenExpiryInDate = new Date(parseInt(accessTokenExpiryIn));
+  const accessTokenExpiryInSubOneMin = subMinutes(accessTokenExpiryInDate, 1);
+  if (!API_PUBLIC_PATHS.includes(config.url) && (now.getTime() >= accessTokenExpiryInSubOneMin.getTime())) {
     const input = {
       refreshToken: localStorage.getItem('refreshToken'),
       userId: localStorage.getItem('userId')
@@ -31,11 +35,11 @@ instance.interceptors.request.use(async (config) => {
 instance.interceptors.response.use(async (response) => {
   return response;
 }, function (error) {
+  console.log('error----', error);
   if (error.name === 'TokenExpiredError' && error.url.includes('/auth/v1/token/acess')) {
     // Toast error
-    console.log('error----', error);
   }
-  return Promise.reject({ error, isForceLogout: true });
+  return Promise.reject({ error });
 });
 
 export default instance;

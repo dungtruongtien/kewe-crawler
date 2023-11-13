@@ -40,17 +40,17 @@ async function startApp() {
   app.use(cors(corsOptions));
 
   app.use('/health-check', (req, res, next) => { console.log('health check') });
-  app.use('/api/keyword/v1', keywordRouter);
-  app.use('/api/user/v1', authenticate, userRouter);
+  app.use('/api/keyword/v1', authenticate, keywordRouter);
+  app.use('/api/user/v1', userRouter);
   app.use('/api/auth/v1', authRouter);
 
   app.use((err, req, res, next) => {
     //TODO: Handler logger for error level
-    if(config.nodeEnv === 'development') {
+    if (config.nodeEnv === 'development') {
       console.log(err)
     }
 
-    if(!err.status || err.status >= 500 && err.status <= 599) {
+    if (!err.status || err.status >= 500 && err.status <= 599) {
       err.status = 500;
       err.name = 'INTERNAL_ERROR';
       err.message = 'Internal error';

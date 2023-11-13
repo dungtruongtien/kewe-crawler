@@ -15,7 +15,6 @@ export const login = async ({ email, password }) => {
   return response.data.data;
 }
 
-
 export const logout = async (userId) => {
   return httpClient.post(`${BASE_SERVICE_URL}/logout`, { userId });
 }

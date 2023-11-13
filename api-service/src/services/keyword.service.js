@@ -10,10 +10,8 @@ export const handleKeywordCrawlerSv = async ({ listKeywords, userId }) => {
 
   //Save to memcache for tracking process
   const trackingKey = `crawler_tracking_${userId}_${new Date().getTime()}`;
-  console.log('trackingKey---', trackingKey);
-  console.log('JSON.stringify({ listKeywords, total: listKeywords.length })----', JSON.stringify({ listKeywords, total: listKeywords.length }));
-  const data = await set('abc*', JSON.stringify({ listKeywords, total: listKeywords.length }));
-  if(!data || data !== 'OK') {
+  const data = await set(trackingKey, JSON.stringify({ listKeywords, total: listKeywords.length }));
+  if (!data || data !== 'OK') {
     throw new Error(`Cannot write tracking process ${trackingKey} to memcache`);
   }
 
@@ -31,6 +29,8 @@ export const handleKeywordCrawlerSv = async ({ listKeywords, userId }) => {
     })
   });
   await Promise.all(promiseAll);
+
+  return { trackingKey };
 }
 
 export const handleKeywordProcessTrackingSV = async ({ trackingKey }) => {

@@ -7,12 +7,13 @@ export const handleKeywordCrawlerCtr = async (req, res, next) => {
     validateKeywordCrawlerInput(req);
 
     // Handle business logic
-    // const { userId } = res.locals.user;
+    const { userId } = res.locals.user;
     const { listKeywords } = req.body;
-    await handleKeywordCrawlerSv({ listKeywords, userId: 6 });
+    const resp = await handleKeywordCrawlerSv({ listKeywords, userId });
     res.status(200).json({
       message: 'Your list of keyword is crawling',
-      status: 'SUCCESS'
+      status: 'SUCCESS',
+      data: resp,
     })
 
   } catch (err) {
@@ -32,7 +33,7 @@ export const handleKeywordProcessTrackingCtl = async (req, res, next) => {
     console.log('data---', data);
     res.status(200).json({
       status: 'SUCCESS',
-      data
+      data: JSON.parse(data),
     })
 
   } catch (err) {
