@@ -3,18 +3,20 @@ import Button from 'react-bootstrap/Button';
 import { format } from 'date-fns';
 import { Header } from '../../components/header';
 import KWBreadcrumb from '../../components/breadcumb';
-import StatisticCard from '../../components/statisticCard';
 import KWTable from '../../components/table';
 import KWPagination from '../../components/pagination';
 import FileUpload from '../../components/fileUpload';
 import KWProgressBar from '../../components/progressBar';
-import { listKeywords, uploadKeywords } from '../../services/keyword.service';
+import { getKeywordCrawlerProcess, listKeywords, uploadKeywords } from '../../services/keyword.service';
+import { useToasts } from 'react-toast-notifications';
 
 export default function HomePage() {
-    const limitPerPage = 5; //TODO Change this to State and let user choose
+    const limitPerPage = 10; //TODO Change this to State and let user choose
+    const { addToast } = useToasts();
     const [keywords, setKeywords] = useState([]);
     const [isLoading, setIsLoading] = useState(false);
     const [pageInfo, setPageInfo] = useState({ total: 0, currentPage: 1 });
+    const [crawlerProcessInfo, setCrawlerProcessInfo] = useState(null);
 
     const processData = (e) => {
         const file = e.target.files[0];
@@ -23,16 +25,16 @@ export default function HomePage() {
             // Validate file type, size.
             console.log('file-----', file);
             if (file.type !== 'text/csv') {
-                //TODO throw error and return
-                alert('File type must be in CSV format');
+                addToast('File type must be in CSV format', { appearance: 'error', autoDismiss: true });
+                e.target.value = null;
                 return;
             }
 
             const fileSizeMaximum = 1000000;
             // validate file size in bytes, 1000000 bytes = 1MB, too large with CSV file with 100 keywords
             if (file.size > 1000000) {
-                //TODO throw error and return
-                alert(`File type must be less than ${fileSizeMaximum / 1000000}MB`);
+                addToast(`File type must be less than ${fileSizeMaximum / 1000000}MB`, { appearance: 'error', autoDismiss: true });
+                e.target.value = null;
                 return;
             }
 
@@ -42,11 +44,8 @@ export default function HomePage() {
             reader.onload = function (e) {
                 const contents = e.target.result;
                 if (!contents) {
-                    //TODO throw error and return
-                    alert('Missing file content');
+                    addToast('Missing file content', { appearance: 'error', autoDismiss: true });
                 }
-                console.log('contents----', typeof contents);
-                console.log('contents----', contents.split('\n'));
                 const rawKeywordArr = contents.split('\n');
                 const keywordArr = rawKeywordArr.reduce((total, keyword) => {
                     if (keyword) {
@@ -55,15 +54,49 @@ export default function HomePage() {
                     }
                     return total;
                 }, []);
-                if (keywordArr.length > 0) {
-                    //TODO throw error and return
-                    alert('List keywords must be less than 100');
+                if (keywordArr.length > 100) {
+                    addToast('List keywords must be less than 100', { appearance: 'error', autoDismiss: true });
                     return;
                 }
-                console.log('keywordArr----', keywordArr);
-                uploadKeywords({ listKeywords: keywordArr }).then((data) => {
-                    console.log('data-----', data);
-                })
+                uploadKeywords({ listKeywords: keywordArr }).then(async (data) => {
+                    setCrawlerProcessInfo({
+                        processPercentage: 0,
+                    });
+                    const { trackingKey } = data;
+                    //Crawler is delay 5s between each key number. Need to upgrade this approach to get better performance.
+                    const intervalTime = 5000;
+                    const processInterval = setInterval(async () => {
+                        const keywordCrawlerProcess = await getKeywordCrawlerProcess({ trackingKey });
+                        if (!keywordCrawlerProcess || !keywordCrawlerProcess.listKeywords || keywordCrawlerProcess.listKeywords.length === 0) {
+                            setCrawlerProcessInfo(null);
+                            addToast('Crawler is done successfully', { appearance: 'success', autoDismiss: true });
+                            clearInterval(processInterval);
+                            setIsLoading(true);
+                            e.target.value = null;
+                            const currentPage = 1;
+                            const filter = {
+                                attributes: 'id,totalAdWordsAdvertisers,totalLinks,htmlStaticLink,keyword,createdAt',
+                                limit: limitPerPage,
+                                page: currentPage
+                            }
+                            let filterStr = Object.keys(filter).reduce((total, key) => {
+                                total += `&${key}=${filter[key]}`;
+                                return total;
+                            }, '');
+                            filterStr = filterStr.replace('&', '');
+                            listKeywords(filterStr).then(data => {
+                                setKeywords(data.rows);
+                                setPageInfo({ totalPagination: Math.ceil(data.count / limitPerPage), currentPage: parseInt(currentPage) });
+                                setIsLoading(false);
+                            });
+                            return;
+                        }
+                        const currentProcessPercentage = Math.ceil(((keywordCrawlerProcess.total - keywordCrawlerProcess.listKeywords.length) / keywordCrawlerProcess.total) * 100);
+                        setCrawlerProcessInfo({
+                            processPercentage: currentProcessPercentage,
+                        });
+                    }, intervalTime);
+                });
             };
             reader.readAsText(file);
         }
@@ -145,25 +178,15 @@ export default function HomePage() {
 
             <Header />
             <KWBreadcrumb />
-            <div className='card-wrapper'>
-                <div className='card-report'>
-                    <StatisticCard />
-                </div>
-                <div className='card-report'>
-                    <StatisticCard />
-                </div>
-                <div className='card-report'>
-                    <StatisticCard />
-                </div>
-            </div>
-
             <div className='kw-table-wrapper'>
                 <div className='title'>
                     <h4>KWCrawler Info</h4>
                 </div>
                 <div className='kw-table'>
-                    <FileUpload processData={processData} />
-                    <KWProgressBar />
+                    <FileUpload isDisabled={!!crawlerProcessInfo} processData={processData} />
+                    <div style={{ display: crawlerProcessInfo ? 'block' : 'none' }}>
+                        <KWProgressBar now={crawlerProcessInfo ? crawlerProcessInfo.processPercentage : 0} />
+                    </div>
                     <KWTable isLoading={isLoading} columns={tableColumns} data={keywords} />
                 </div>
                 <div className='kw-pagination-wrapper'>

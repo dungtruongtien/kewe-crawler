@@ -3,8 +3,9 @@ import axios from 'axios';
 
 import config from '../config/init';
 import Keyword from '../models/keyword.model';
+import { del, get, set } from '../client/redis';
 
-export const crawlerConsumer = async (keyword, userId) => {
+export const crawlerConsumer = async ({ keyword, userId, trackingKey, totalKeywords }) => {
   // Call API to google.com
   const browser = await puppeteer.launch({ headless: "new" });
   const page = await browser.newPage();
@@ -75,25 +76,46 @@ export const crawlerConsumer = async (keyword, userId) => {
 
   await browser.close();
 
-  try {
-    // Save to database
-    if (result.isDone) {
-      await Keyword.create({
-        keyword,
-        userId,
-        totalAdWordsAdvertisers: result.sponsoredLinks.length,
-        adWordsAdvertisers: result.sponsoredLinks,
-        totalLinks: result.firstPageLinks.length,
-        links: result.firstPageLinks,
-        searchResultStatistics: result.searchResultStatistics,
-        htmlStaticLink: `${config.fileServerHost}/${uploadPath}`
-      });
+  // Save to database
+  if (result.isDone) {
+    await Keyword.create({
+      keyword,
+      userId,
+      totalAdWordsAdvertisers: result.sponsoredLinks.length,
+      adWordsAdvertisers: result.sponsoredLinks,
+      totalLinks: result.firstPageLinks.length,
+      links: result.firstPageLinks,
+      searchResultStatistics: result.searchResultStatistics,
+      htmlStaticLink: `${config.fileServerHost}/${uploadPath}`
+    });
+
+    //Process tracking
+    console.log('trackingKey---', trackingKey);
+    const trackingDataStr = await get(trackingKey);
+    if (!trackingDataStr) {
+      return;
     }
-    //TODO update redis to tracking process
-  } catch (error) {
-    console.log('error------', error);
-    // Handle retry in with this message after n second.
+    const { total, listKeywords } = JSON.parse(trackingDataStr);
+    const remainKeywords = [];
+    let isRemoved = false;
+    for (let i = 0; i < listKeywords.length; i++) {
+      const processingKeyword = listKeywords[i];
+      console.log('processingKeyword----', processingKeyword);
+      if (isRemoved || processingKeyword !== keyword) {
+        remainKeywords.push(processingKeyword);
+        isRemoved = true;
+      }
+    }
+    console.log('remainKeywords----', remainKeywords);
+    if (remainKeywords.length === 0) {
+      const resp = await del(trackingKey);
+      console.log('resp----', resp);
+      return;
+    }
+    set(trackingKey, JSON.stringify({ listKeywords: remainKeywords, total }));
+
   }
+  //TODO update redis to tracking process
 
 }
 

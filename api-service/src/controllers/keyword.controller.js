@@ -1,5 +1,5 @@
 import { validator } from '../utils/validator';
-import { handleKeywordCrawlerSv, handleListKeywordSv } from '../services/keyword.service';
+import { handleKeywordCrawlerSv, handleKeywordProcessTrackingSV, handleListKeywordSv } from '../services/keyword.service';
 
 export const handleKeywordCrawlerCtr = async (req, res, next) => {
   try {
@@ -9,10 +9,31 @@ export const handleKeywordCrawlerCtr = async (req, res, next) => {
     // Handle business logic
     const { userId } = res.locals.user;
     const { listKeywords } = req.body;
-    await handleKeywordCrawlerSv({ listKeywords, userId });
+    const resp = await handleKeywordCrawlerSv({ listKeywords, userId });
     res.status(200).json({
       message: 'Your list of keyword is crawling',
-      status: 'SUCCESS'
+      status: 'SUCCESS',
+      data: resp,
+    })
+
+  } catch (err) {
+    next(err);
+  }
+}
+
+export const handleKeywordProcessTrackingCtl = async (req, res, next) => {
+  try {
+    // Validate
+    validateKeywordProcessTrackingInput(req);
+
+    // Handle business logic
+    // const { userId } = res.locals.user;
+    const { trackingKey } = req.query;
+    const data = await handleKeywordProcessTrackingSV({ trackingKey });
+    console.log('data---', data);
+    res.status(200).json({
+      status: 'SUCCESS',
+      data: JSON.parse(data),
     })
 
   } catch (err) {
@@ -64,4 +85,10 @@ const validateListKeywordInput = (req) => {
   const { limit, page } = req.query;
   validator.number.isNumber(limit, 'limit');
   validator.number.isNumber(page, 'offset');
+}
+
+const validateKeywordProcessTrackingInput = (req) => {
+  validator.obj.required(req.query, 'trackingKey');
+  const { trackingKey } = req.query;
+  validator.string.isString(trackingKey, 'trackingKey');
 }

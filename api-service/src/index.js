@@ -9,7 +9,8 @@ import sequelizeService from './client/db';
 import keywordRouter from './routes/keyword.route';
 import userRouter from './routes/user.route';
 import authRouter from './routes/auth.route';
-import { initConnection } from './client/amqpClient/init';
+import { initMessageQueueConnection } from './client/amqpClient/init';
+import { initMemcache } from './client/redis';
 import { authenticate } from './middlewares/auth.middleware';
 
 dotenv.config();
@@ -17,7 +18,8 @@ dotenv.config();
 async function bootstrap() {
   // Init db connection
   sequelizeService.init();
-  await initConnection()
+  await initMessageQueueConnection();
+  await initMemcache();
 }
 
 async function startApp() {
@@ -39,16 +41,16 @@ async function startApp() {
 
   app.use('/health-check', (req, res, next) => { console.log('health check') });
   app.use('/api/keyword/v1', authenticate, keywordRouter);
-  app.use('/api/user/v1', authenticate, userRouter);
+  app.use('/api/user/v1', userRouter);
   app.use('/api/auth/v1', authRouter);
 
   app.use((err, req, res, next) => {
     //TODO: Handler logger for error level
-    if(config.nodeEnv === 'development') {
+    if (config.nodeEnv === 'development') {
       console.log(err)
     }
 
-    if(!err.status || err.status >= 500 && err.status <= 599) {
+    if (!err.status || err.status >= 500 && err.status <= 599) {
       err.status = 500;
       err.name = 'INTERNAL_ERROR';
       err.message = 'Internal error';

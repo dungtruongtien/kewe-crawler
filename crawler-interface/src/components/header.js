@@ -29,8 +29,10 @@ function Avatar() {
       localStorage.removeItem('refreshToken');
       localStorage.removeItem('accessTokenExpiryIn');
       localStorage.removeItem('userId');
+      console.log('navigate login-------');
       navigate('/login');
     } catch (error) {
+      navigate('/login');
       // Do nothing, avoid crashing or throwing error to browser
     }
   }

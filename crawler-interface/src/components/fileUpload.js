@@ -1,10 +1,10 @@
 import React from 'react';
 
-function FileUpload({ processData }) {
+function FileUpload({ isDisabled, processData }) {
   return (
     <div className='upload-wrapper'>
       <div className='title'>Upload CSV</div>
-      <input onChange={processData} type="file" />
+      <input disabled={isDisabled} onChange={processData} type="file" />
     </div>
   )
 }
