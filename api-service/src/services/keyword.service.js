@@ -1,14 +1,28 @@
 import Keyword from '../models/keyword.model';
 import { GLOBAL_MQ_CONN, pushToQueue } from '../client/amqpClient/init';
+import { get, set } from '../client/redis';
 
 export const handleKeywordCrawlerSv = async ({ listKeywords, userId }) => {
   // Push to redis for tracking
   // Loop all listKeywords
   //  Push to queue
   const mqChannel = await GLOBAL_MQ_CONN.createChannel();
+
+  //Save to memcache for tracking process
+  const trackingKey = `crawler_tracking_${userId}_${new Date().getTime()}`;
+  console.log('trackingKey---', trackingKey);
+  console.log('JSON.stringify({ listKeywords, total: listKeywords.length })----', JSON.stringify({ listKeywords, total: listKeywords.length }));
+  const data = await set('abc*', JSON.stringify({ listKeywords, total: listKeywords.length }));
+  if(!data || data !== 'OK') {
+    throw new Error(`Cannot write tracking process ${trackingKey} to memcache`);
+  }
+
+  //Push to every single message queue
   const promiseAll = listKeywords.map((keyword) => {
     return new Promise((resolve, reject) => {
       const message = {
+        totalKeywords: listKeywords.length,
+        trackingKey,
         keyword,
         userId
       }
@@ -17,6 +31,10 @@ export const handleKeywordCrawlerSv = async ({ listKeywords, userId }) => {
     })
   });
   await Promise.all(promiseAll);
+}
+
+export const handleKeywordProcessTrackingSV = async ({ trackingKey }) => {
+  return get(trackingKey);
 }
 
 

@@ -7,7 +7,7 @@ export const connection = () => {
 	return amqplib.connect(`amqp://${config.messageQueue.amqpUser}:${config.messageQueue.amqpPassword}@${config.messageQueue.amqpHost}:${config.messageQueue.amqpPort}/`);
 }
 
-export const initConnection = async () => {
+export const initMessageQueueConnection = async () => {
 	GLOBAL_MQ_CONN = await connection();
 }
 
