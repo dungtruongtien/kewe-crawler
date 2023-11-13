@@ -1,15 +1,15 @@
 import { validator } from '../utils/validator';
-import { handleLoginSV, handleLogoutSV, handleRefreshTokenSV } from '../services/auth.service';
+import { handleLoginSv, handleLogoutSv, handleRefreshTokenSv } from '../services/auth.service';
 import { ValidationError } from '../common/customError';
 
-export const handleLoginCtl = async (req, res, next) => {
+export const handleLoginCtr = async (req, res, next) => {
   try {
     // Validate
     validateLoginInput(req);
 
     // Handle business logic
     const loginUser = req.body;
-    const token = await handleLoginSV(loginUser);
+    const token = await handleLoginSv(loginUser);
     res.status(200).json({
       status: 'SUCCESS',
       data: token
@@ -20,14 +20,14 @@ export const handleLoginCtl = async (req, res, next) => {
   }
 }
 
-export const handleLogoutCtl = async (req, res, next) => {
+export const handleLogoutCtr = async (req, res, next) => {
   try {
     // Validate
     validateLogoutInput(req);
 
     // Handle business logic
     const { userId } = req.body;
-    const token = await handleLogoutSV(userId);
+    const token = await handleLogoutSv(userId);
     res.status(200).json({
       status: 'SUCCESS'
     });
@@ -38,14 +38,14 @@ export const handleLogoutCtl = async (req, res, next) => {
 }
 
 
-export const handleRefreshTokenCtl = async (req, res, next) => {
+export const handleRefreshTokenCtr = async (req, res, next) => {
   try {
     // Validate
     validateRefreshTokenInput(req);
 
     // Handle business logic
     const { refreshToken, userId } = req.body;
-    const token = await handleRefreshTokenSV({ refreshToken, userId });
+    const token = await handleRefreshTokenSv({ refreshToken, userId });
     res.status(200).json({
       status: 'SUCCESS',
       data: token

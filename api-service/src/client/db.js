@@ -1,6 +1,7 @@
 import { Sequelize } from "sequelize";
-import config from "../config/init";
 import fs from "fs";
+
+import config from "../config/init";
 
 const modelFiles = fs
   .readdirSync(__dirname + "/../models/")

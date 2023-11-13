@@ -6,7 +6,6 @@ export class ValidationError extends Error {
   }
 }
 
-
 export class BusinessError extends Error {
   constructor(message, name = 'BusinessError') {
     super(message);
@@ -14,7 +13,6 @@ export class BusinessError extends Error {
     this.status = 400;
   }
 }
-
 
 export class NotfoundError extends Error {
   constructor(message, name = 'NotfoundError') {

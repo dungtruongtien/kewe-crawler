@@ -3,9 +3,9 @@ import axios from 'axios';
 
 import config from '../config/init';
 import Keyword from '../models/keyword.model';
-import { del, get, set } from '../client/redis';
+import { del, get, set } from '../client/redis.client';
 
-export const crawlerConsumer = async ({ keyword, userId, trackingKey, totalKeywords }) => {
+export const crawlerConsumer = async ({ keyword, userId, trackingKey }) => {
   // Call API to google.com
   const browser = await puppeteer.launch({ headless: "new" });
   const page = await browser.newPage();
@@ -90,30 +90,7 @@ export const crawlerConsumer = async ({ keyword, userId, trackingKey, totalKeywo
     });
 
     //Process tracking
-    console.log('trackingKey---', trackingKey);
-    const trackingDataStr = await get(trackingKey);
-    if (!trackingDataStr) {
-      return;
-    }
-    const { total, listKeywords } = JSON.parse(trackingDataStr);
-    const remainKeywords = [];
-    let isRemoved = false;
-    for (let i = 0; i < listKeywords.length; i++) {
-      const processingKeyword = listKeywords[i];
-      console.log('processingKeyword----', processingKeyword);
-      if (isRemoved || processingKeyword !== keyword) {
-        remainKeywords.push(processingKeyword);
-        isRemoved = true;
-      }
-    }
-    console.log('remainKeywords----', remainKeywords);
-    if (remainKeywords.length === 0) {
-      const resp = await del(trackingKey);
-      console.log('resp----', resp);
-      return;
-    }
-    set(trackingKey, JSON.stringify({ listKeywords: remainKeywords, total }));
-
+    processTracking(trackingKey, keyword);
   }
   //TODO update redis to tracking process
 
@@ -137,4 +114,28 @@ const uploadFile = async (userId, html) => {
 
   const response = await axios.request(requestConfig);
   return response.data.data.path;
+}
+
+const processTracking = async (trackingKey, keyword) => {
+  const trackingDataStr = await get(trackingKey);
+  if (!trackingDataStr) {
+    return;
+  }
+  const { total, listKeywords } = JSON.parse(trackingDataStr);
+  const remainKeywords = [];
+  let isRemoved = false;
+  
+  // Remove crawled keyword from cache, if there're multiple same keyword, remove one only
+  for (let i = 0; i < listKeywords.length; i++) {
+    const processingKeyword = listKeywords[i];
+    if (isRemoved || processingKeyword !== keyword) {
+      remainKeywords.push(processingKeyword);
+      isRemoved = true;
+    }
+  }
+  if (remainKeywords.length === 0) {
+    await del(trackingKey);
+    return;
+  }
+  set(trackingKey, JSON.stringify({ listKeywords: remainKeywords, total }));
 }

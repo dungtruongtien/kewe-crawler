@@ -1,11 +1,14 @@
 import React, { useEffect, useState } from 'react';
 import Breadcrumb from 'react-bootstrap/Breadcrumb';
 import { Link } from 'react-router-dom';
+
 import { capitalizeFirstLetter } from '../util/method';
 
 function KWBreadcrumb() {
   const [breadcumbData, setBreadcumbData] = useState([]);
+
   useEffect(() => {
+    // Convert URL to breadcumb, e.g: /a/b/c
     const paths = window.location.pathname;
     const pathNames = paths.split('/').filter(path => !!path);
     let url = '';
@@ -18,6 +21,7 @@ function KWBreadcrumb() {
     });
     setBreadcumbData(data);
   }, [])
+
   return (
     <Breadcrumb>
       {breadcumbData.map((data) => {

@@ -1,12 +1,12 @@
 import express from 'express';
-import { handleLoginCtl, handleLogoutCtl, handleRefreshTokenCtl } from '../controllers/auth.controller';
+import { handleLoginCtr, handleLogoutCtr, handleRefreshTokenCtr } from '../controllers/auth.controller';
 const router = express.Router();
 
-router.post('/login', handleLoginCtl);
+router.post('/login', handleLoginCtr);
 
-router.post('/logout', handleLogoutCtl);
+router.post('/logout', handleLogoutCtr);
 
-router.post('/token/access', handleRefreshTokenCtl);
+router.post('/token/access', handleRefreshTokenCtr);
 
 
 export default router;
