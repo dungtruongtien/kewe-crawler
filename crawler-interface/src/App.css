@@ -197,6 +197,11 @@ form span {
 
 .kw-table-wrapper {
     margin: 1rem 0 0 0;
+    padding: 1rem;
+}
+
+.kw-table-wrapper .title{
+    text-align: center;
 }
 
 .kw-table-wrapper .visually-hidden {
@@ -206,6 +211,10 @@ form span {
 .kw-table-wrapper .kw-table {
     padding: 10px;
     box-shadow: 5px 4px #888888;
+}
+
+.kw-table-wrapper .kw-table .file-upload-wrapper{
+    margin: 1rem 0 1rem 0;
 }
 
 .kw-table-wrapper .kw-pagination-wrapper {
@@ -233,6 +242,7 @@ form span {
 }
 
 .upload-wrapper input::file-selector-button {
+    cursor: pointer;
     font-weight: bold;
     color: dodgerblue;
     padding: 0.5em;

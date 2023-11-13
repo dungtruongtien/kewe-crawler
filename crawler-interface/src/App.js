@@ -2,8 +2,6 @@ import React, { createContext, useState } from 'react'
 import { Navigate, Route, BrowserRouter as Router, Routes } from 'react-router-dom'
 import { preventAuthenticatedRoutes, protectedRoutes } from './config/routes'
 import { ProtectedPage } from './components/protectedPage'
-import RegisterPage from './layouts/pages/register.page'
-import LoginPage from './layouts/pages/login.page'
 import { ToastProvider } from 'react-toast-notifications';
 import './App.css'
 import { PreventAuthenticatedPage } from './components/preventAuthenticatedPage'

@@ -1,20 +1,22 @@
 import axios from 'axios';
-import { format, subMinutes, diff } from 'date-fns';
+import { subMinutes } from 'date-fns';
 
 const API_PUBLIC_PATHS = ['/auth/v1/token/access', '/auth/v1/token/login', '/auth/v1/token/logout']
 
 const instance = axios.create({
   baseURL: `${process.env.REACT_APP_API_SERVICE}/api/`,
-  timeout: 1000,
+  timeout: 5000,
 });
 
 instance.interceptors.request.use(async (config) => {
   config.headers['x-access-token'] = localStorage.getItem('accessToken');
-  // Do something before request is sent
+
   const accessTokenExpiryIn = localStorage.getItem('accessTokenExpiryIn');
   const now = new Date();
   const accessTokenExpiryInDate = new Date(parseInt(accessTokenExpiryIn));
   const accessTokenExpiryInSubOneMin = subMinutes(accessTokenExpiryInDate, 1);
+
+  // Handle get new access token before expiration
   if (!API_PUBLIC_PATHS.includes(config.url) && (now.getTime() >= accessTokenExpiryInSubOneMin.getTime())) {
     const input = {
       refreshToken: localStorage.getItem('refreshToken'),

@@ -9,7 +9,6 @@ export function Header() {
   return (
     <div className='header-wrapper'>
       <div className='brand'>
-        {/* <Navbar.Brand href="/home">Kewe Crawler</Navbar.Brand> */}
         <Link to={'/home'}>Kewe Crawler</Link>
       </div>
       <div className='avatar-wrapper'>
@@ -29,7 +28,6 @@ function Avatar() {
       localStorage.removeItem('refreshToken');
       localStorage.removeItem('accessTokenExpiryIn');
       localStorage.removeItem('userId');
-      console.log('navigate login-------');
       navigate('/login');
     } catch (error) {
       navigate('/login');
@@ -41,7 +39,7 @@ function Avatar() {
     <>
       <Dropdown>
         <Dropdown.Toggle id="dropdown-basic">
-          <Image src="/13.jpg" />
+          <Image src="/avatar.jpeg" />
         </Dropdown.Toggle>
 
         <Dropdown.Menu>

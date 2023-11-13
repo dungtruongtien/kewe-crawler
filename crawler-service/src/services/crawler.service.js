@@ -90,7 +90,7 @@ export const crawlerConsumer = async ({ keyword, userId, trackingKey }) => {
     });
 
     //Process tracking
-    processTracking(trackingKey);
+    processTracking(trackingKey, keyword);
   }
   //TODO update redis to tracking process
 
@@ -116,7 +116,7 @@ const uploadFile = async (userId, html) => {
   return response.data.data.path;
 }
 
-const processTracking = async (trackingKey) => {
+const processTracking = async (trackingKey, keyword) => {
   const trackingDataStr = await get(trackingKey);
   if (!trackingDataStr) {
     return;
