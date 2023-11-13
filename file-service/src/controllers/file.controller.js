@@ -3,7 +3,7 @@ import { validator } from '../utils/validator';
 
 export const handleUploadFileCtr = async (req, res, next) => {
   // Validate
-  validateKeywordCrawlerInput(req);
+  validateKeywordUploadFileInput(req);
 
   // Handle business logic
   const { htmlContent, fileName } = req.body;
@@ -16,7 +16,7 @@ export const handleUploadFileCtr = async (req, res, next) => {
   })
 }
 
-const validateKeywordCrawlerInput = (req) => {
+const validateKeywordUploadFileInput = (req) => {
   if (!req.body) {
     throw new Error('Missing body input');
   }

@@ -3,7 +3,7 @@ dotenv.config();
 
 export default {
   port: process.env.PORT || 8081,
-  fileServerHost: process.env.FILE_SERVER_HOST,
+  nodeEnv: process.env.NODE_ENV || 'development',
   database: {
     dialect: process.env.DB_DIALECT,
     dbHost: process.env.DB_HOST,
@@ -11,6 +11,10 @@ export default {
     dbPassword: process.env.DB_PASS,
     dbName: process.env.DB_NAME,
     dbPort: process.env.DB_PORT,
+  },
+  memCache: {
+    host: process.env.REDIS_HOST,
+    port: process.env.REDIS_PORT,
   },
   messageQueue: {
     amqpHost: process.env.AMQP_HOST,

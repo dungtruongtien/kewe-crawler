@@ -1,14 +1,16 @@
+var amqp = require('amqplib/callback_api');
+
 import sequelizeService from "./client/db.client";
-import { get, initMemcache } from "./client/redis";
+import { initMemcache } from "./client/redis.client";
 import { CRAWLER_QUEUE_NAME } from "./common/constant";
 import { crawlerConsumer } from "./services/crawler.service";
-var amqp = require('amqplib/callback_api');
+import config from './config/init';
 
 
 
 sequelizeService.init().then(async () => {
   await initMemcache();
-  amqp.connect('amqp://lumens:lumens@localhost:5672', function (error, connection) {
+  amqp.connect(`amqp://${config.messageQueue.amqpUser}:${config.messageQueue.amqpPassword}@${config.messageQueue.amqpHost}:${config.messageQueue.amqpPort}/`, function (error, connection) {
     connection.createChannel(function (error, channel) {
       var queue = CRAWLER_QUEUE_NAME;
 
