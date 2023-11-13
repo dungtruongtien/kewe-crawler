@@ -1,10 +1,10 @@
 import express from 'express';
-import { handleKeywordCrawlerCtr, handleKeywordProcessTrackingCtl, handleListKeywordCtr } from '../controllers/keyword.controller';
+import { handleKeywordCrawlerCtr, handleKeywordProcessTrackingCtr, handleListKeywordCtr } from '../controllers/keyword.controller';
 const router = express.Router();
 
 router.get('/', handleListKeywordCtr)
 
-router.get('/process/tracking', handleKeywordProcessTrackingCtl)
+router.get('/process/tracking', handleKeywordProcessTrackingCtr)
 
 router.post('/upload', handleKeywordCrawlerCtr)
 

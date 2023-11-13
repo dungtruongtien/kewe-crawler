@@ -1,10 +1,9 @@
 import Keyword from '../models/keyword.model';
-import { GLOBAL_MQ_CONN, pushToQueue } from '../client/amqpClient/init';
+import { GLOBAL_MQ_CONN, pushToQueue } from '../client/amqp';
 import { get, set } from '../client/redis';
+import { CRAWLER_QUEUE_NAME } from '../common/constant';
 
 export const handleKeywordCrawlerSv = async ({ listKeywords, userId }) => {
-  // Push to redis for tracking
-  // Loop all listKeywords
   //  Push to queue
   const mqChannel = await GLOBAL_MQ_CONN.createChannel();
 
@@ -24,7 +23,7 @@ export const handleKeywordCrawlerSv = async ({ listKeywords, userId }) => {
         keyword,
         userId
       }
-      pushToQueue(mqChannel, 'keyword_crawling', JSON.stringify(message));
+      pushToQueue(mqChannel, CRAWLER_QUEUE_NAME, JSON.stringify(message));
       resolve('DONE');
     })
   });
@@ -33,7 +32,7 @@ export const handleKeywordCrawlerSv = async ({ listKeywords, userId }) => {
   return { trackingKey };
 }
 
-export const handleKeywordProcessTrackingSV = async ({ trackingKey }) => {
+export const handleKeywordProcessTrackingSv = async ({ trackingKey }) => {
   return get(trackingKey);
 }
 

@@ -12,6 +12,10 @@ export default {
     dbName: process.env.DB_NAME,
     dbPort: process.env.DB_PORT,
   },
+  memCache: {
+    host: process.env.REDIS_HOST,
+    port: process.env.REDIS_PORT,
+  },
   messageQueue: {
     amqpHost: process.env.AMQP_HOST,
     amqpPort: process.env.AMQP_PORT,

@@ -1,5 +1,5 @@
 import { validator } from '../utils/validator';
-import { handleKeywordCrawlerSv, handleKeywordProcessTrackingSV, handleListKeywordSv } from '../services/keyword.service';
+import { handleKeywordCrawlerSv, handleKeywordProcessTrackingSv, handleListKeywordSv } from '../services/keyword.service';
 
 export const handleKeywordCrawlerCtr = async (req, res, next) => {
   try {
@@ -21,16 +21,14 @@ export const handleKeywordCrawlerCtr = async (req, res, next) => {
   }
 }
 
-export const handleKeywordProcessTrackingCtl = async (req, res, next) => {
+export const handleKeywordProcessTrackingCtr = async (req, res, next) => {
   try {
     // Validate
     validateKeywordProcessTrackingInput(req);
 
     // Handle business logic
-    // const { userId } = res.locals.user;
     const { trackingKey } = req.query;
-    const data = await handleKeywordProcessTrackingSV({ trackingKey });
-    console.log('data---', data);
+    const data = await handleKeywordProcessTrackingSv({ trackingKey });
     res.status(200).json({
       status: 'SUCCESS',
       data: JSON.parse(data),

@@ -1,5 +1,6 @@
 import amqplib from 'amqplib';
-import config from '../../config/init';
+
+import config from '../config/init';
 
 export let GLOBAL_MQ_CONN = null;
 

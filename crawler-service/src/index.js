@@ -1,5 +1,6 @@
 import sequelizeService from "./client/db.client";
 import { get, initMemcache } from "./client/redis";
+import { CRAWLER_QUEUE_NAME } from "./common/constant";
 import { crawlerConsumer } from "./services/crawler.service";
 var amqp = require('amqplib/callback_api');
 
@@ -9,7 +10,7 @@ sequelizeService.init().then(async () => {
   await initMemcache();
   amqp.connect('amqp://lumens:lumens@localhost:5672', function (error, connection) {
     connection.createChannel(function (error, channel) {
-      var queue = 'keyword_crawling';
+      var queue = CRAWLER_QUEUE_NAME;
 
       channel.assertQueue(queue, {
         durable: true

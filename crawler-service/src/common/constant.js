@@ -1,0 +1,1 @@
+export const CRAWLER_QUEUE_NAME = 'keyword_crawling';

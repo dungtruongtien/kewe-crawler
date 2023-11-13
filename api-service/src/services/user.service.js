@@ -2,7 +2,7 @@ import bcrypt from 'bcrypt';
 import User from '../models/user.model';
 import { BusinessError } from '../common/customError';
 
-export const handleRegisterSV = async ({ email, password, fullName }) => {
+export const handleRegisterSv = async ({ email, password, fullName }) => {
   const existsEmail = await User.findOne({ where: { email } });
   if (existsEmail) {
     throw new BusinessError('This email was registerd', 'RegisterdEmail');
@@ -20,7 +20,7 @@ export const handleRegisterSV = async ({ email, password, fullName }) => {
 }
 
 
-export const handleMeSV = async (userId) => {
+export const handleMeSv = async (userId) => {
   const userData = await User.findOne({ 
     where: { id: userId } ,
     attributes: ['email', 'fullName', 'name', 'id']

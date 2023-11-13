@@ -1,12 +1,13 @@
 import jwt from 'jsonwebtoken';
 import bcrypt from 'bcrypt';
 import { addSeconds } from 'date-fns';
+
 import User from '../models/user.model';
 import Auth from '../models/auth.model';
 import { AuthenticationError, BusinessError, NotfoundError } from '../common/customError';
 import { ACCESS_TOKEN_EXPIRY_ON_SECOND, AUTH_ACCESS_SERCRET_KEY, AUTH_REFRESH_SERCRET_KEY, REFRESH_TOKEN_EXPIRY_ON_SECOND } from '../common/constant';
 
-export const handleLoginSV = async ({ email, password }) => {
+export const handleLoginSv = async ({ email, password }) => {
   const existsUser = await User.findOne({ where: { email } });
   if (!existsUser) {
     throw new NotfoundError('User not existed', 'UserNotFound');
@@ -24,7 +25,6 @@ export const handleLoginSV = async ({ email, password }) => {
   const refreshToken = jwt.sign({ userId: existsUser.id, type: 'refresh' }, AUTH_REFRESH_SERCRET_KEY, { expiresIn: REFRESH_TOKEN_EXPIRY_ON_SECOND });
 
   await Auth.destroy({ where: { userId: existsUser.id } });
-
   await Auth.upsert(
     {
       userId: existsUser.id,
@@ -35,15 +35,15 @@ export const handleLoginSV = async ({ email, password }) => {
   return { userId: existsUser.id, accessToken, accessTokenExpiryIn, refreshToken, refreshTokenExpiryIn }
 }
 
-export const handleLogoutSV = async (userId) => {
+export const handleLogoutSv = async (userId) => {
   return Auth.destroy({ where: { id: userId } });
 }
 
 
-export const handleRefreshTokenSV = async ({ refreshToken, userId }) => {
+export const handleRefreshTokenSv = async ({ refreshToken, userId }) => {
   return jwt.verify(refreshToken, AUTH_REFRESH_SERCRET_KEY, async (error, decoded) => {
-
     if (error) {
+      // Force logout if refresh token is expired
       if (error.name === 'TokenExpiredError') {
         await Auth.destroy({ where: { userId } });
         throw new AuthenticationError('Token is expired', 'TokenExpiredError');
@@ -52,6 +52,8 @@ export const handleRefreshTokenSV = async ({ refreshToken, userId }) => {
       throw new AuthenticationError('Invalid token')
     }
 
+
+    // Check refreshToken of current user is valid
     if (!decoded.userId) {
       throw new AuthenticationError('Invalid token');
     }

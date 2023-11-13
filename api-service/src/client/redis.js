@@ -1,10 +1,12 @@
 import { createClient } from 'redis';
 
+import config from '../config/init';
+
 let GLOBAL_MEMCACHE_CLIENT = null;
 
 export const initMemcache = async () => {
   GLOBAL_MEMCACHE_CLIENT = await createClient({
-    url: 'redis://localhost:6379'
+    url: `redis://${config.memCache.host}:${config.memCache.port}`
   })
     .on('error', err => {
       console.log('Redis Client Error', err);
