@@ -4,7 +4,7 @@ dotenv.config();
 export default {
   port: process.env.PORT || 8081,
   nodeEnv: process.env.NODE_ENV || 'development',
-  fileServerHost: process.env.FILE_SERVER_HOST || 'kewe_file_service:8082',
+  fileServerHost: process.env.FILE_SERVER_HOST || 'http://kewe_file_service:8082',
   database: {
     dialect: process.env.DB_DIALECT || 'postgres',
     dbHost: process.env.DB_HOST || 'postgres_service',
