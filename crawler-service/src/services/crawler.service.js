@@ -108,7 +108,7 @@ const uploadFile = async (userId, html) => {
   let requestConfig = {
     method: 'post',
     maxBodyLength: Infinity,
-    url: `${config.fileServerHost}/file/upload`,
+    url: `${config.fileServerHostLocal}/file/upload`,
     headers: {
       'Content-Type': 'application/json'
     },

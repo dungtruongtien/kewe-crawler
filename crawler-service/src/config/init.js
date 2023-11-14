@@ -4,7 +4,8 @@ dotenv.config();
 export default {
   port: process.env.PORT || 8081,
   nodeEnv: process.env.NODE_ENV || 'development',
-  fileServerHost: process.env.FILE_SERVER_HOST || 'https://file.kewecrawling.info',
+  fileServerHost: process.env.FILE_SERVER_HOST || 'https://file-service.kewecrawling.info',
+  fileServerHostLocal: process.env.FILE_SERVER_HOST_LOCAL || 'http://kewe_file_service:8082',// Temporary tricks, because in UAT env, if use fileServerHost -> the request will go to nginx -> nginx will limit body size
   database: {
     dialect: process.env.DB_DIALECT || 'postgres',
     dbHost: process.env.DB_HOST || 'postgres_service',
