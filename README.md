@@ -19,7 +19,7 @@
 *   ## How to test
 
     ### UAT Environment
-    - Update...
+    - Please visit: <https://kewecrawling.info/home>. Using admin account (admin@gmail.com/abc123) for testing or create your own account.
 
     ### Local Environment
     ### With native
