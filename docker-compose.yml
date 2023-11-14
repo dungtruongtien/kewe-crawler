@@ -1,0 +1,66 @@
+version: '3.1'
+
+services:
+  caching_service:
+    container_name: kewe_caching
+    image: redis:6.2.0
+    restart: on-failure
+    logging:
+      options:
+        max-size: '100k'
+    ports:
+      - 6379:6379
+
+  postgres_service:
+    container_name: kewe_postgres
+    image: postgres
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+    volumes:
+      - kewe-postgres-data:/data/postgres
+      - ./init.sql:/docker-entrypoint-initdb.d/init.sql
+    ports:
+      - "5432:5432"
+
+  rabbitmq_service:
+    container_name: kewe_rabbitmq
+    image: rabbitmq:3.11.8-management
+    environment:
+      - RABBITMQ_DEFAULT_USER=admin
+      - RABBITMQ_DEFAULT_PASS=admin
+    ports:
+      - 5672:5672
+      - 15672:15672
+    volumes:
+      - kewe-rabbitmq-data:/var/lib/rabbitmq/
+
+  kewe_api_service:
+    container_name: kewe_api_service_container
+    restart: always
+    build: ./api-service
+    ports:
+      - 8081:8081
+      
+  kewe_crawler_service:
+    container_name: kewe_crawler_service_container
+    restart: always
+    build: ./crawler-service
+
+  kewe_file_service:
+    container_name: kewe_file_service_container
+    restart: always
+    build: ./file-service
+    ports:
+      - 8082:8082
+
+  kewe_crawler_interface:
+    container_name: kewe_crawler_interface_container
+    restart: always
+    build: ./crawler-interface
+    ports:
+      - 3000:3000
+
+volumes:
+  kewe-rabbitmq-data:
+  kewe-postgres-data:

@@ -9,7 +9,7 @@
   },
   "dependencies": {
     "amqplib": "^0.10.3",
-    "bcrypt": "^5.1.1",
+    "bcryptjs": "^2.4.3",
     "body-parser": "^1.20.1",
     "cookie-parser": "^1.4.6",
     "cors": "^2.8.5",
@@ -25,12 +25,12 @@
     "sequelize": "^6.34.0"
   },
   "devDependencies": {
-    "@babel/plugin-proposal-class-properties": "^7.18.6",
-    "@babel/plugin-proposal-object-rest-spread": "^7.20.7",
-    "babel-node": "^0.0.1-security",
     "@babel/cli": "^7.17.10",
     "@babel/core": "^7.18.2",
     "@babel/node": "^7.22.19",
-    "@babel/preset-env": "^7.18.2"
+    "@babel/plugin-proposal-class-properties": "^7.18.6",
+    "@babel/plugin-proposal-object-rest-spread": "^7.20.7",
+    "@babel/preset-env": "^7.18.2",
+    "babel-node": "^0.0.1-security"
   }
 }
