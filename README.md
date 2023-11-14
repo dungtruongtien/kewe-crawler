@@ -14,7 +14,7 @@
 - After request successfully, use DOM API to get all needed information from search result: Ads links, first page links, result statistic.
 - To prevent Google marks this service as a bot, I'm using message queue to crawl all keyword sequentially, delay 2s between each keyword.
 - The below diagram will be descript the overall crawler workflow:
-![alt text](https://github.com/dungtruongtien/kewe-crawler/blob/main/crawl-workflow..png)
+![alt text](https://raw.githubusercontent.com/dungtruongtien/kewe-crawler/main/crawl-workflow..png)
 
 ## How to test
 ### &nbsp;&nbsp; UAT Environment
