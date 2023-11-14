@@ -102,7 +102,7 @@ export default function HomePage() {
                     setCrawlerProcessInfo({ processPercentage: 0 });
                     const { trackingKey } = data;
                     //Crawler is delay 5s between each key number. Need to upgrade this approach to get better performance.
-                    const intervalTime = 5000;
+                    const intervalTime = 2000;
                     const processInterval = setInterval(async () => {
                         const keywordCrawlerProcess = await getKeywordCrawlerProcess({ trackingKey });
                         //Handle get tracking info success
@@ -145,25 +145,6 @@ export default function HomePage() {
     }
 
     const handleChangePage = (e) => {
-        // setIsLoading(true);
-        // const currentPage = e.target.getAttribute('value');
-        // const filter = {
-        //     attributes: 'id,totalAdWordsAdvertisers,totalLinks,htmlStaticLink,keyword,createdAt',
-        //     limit: LIMIT_PER_PAGE,
-        //     page: currentPage
-        // }
-        // let filterStr = Object.keys(filter).reduce((total, key) => {
-        //     total += `&${key}=${filter[key]}`;
-        //     return total;
-        // }, '');
-        // filterStr = filterStr.replace('&', '');
-        // console.log('filterStr-----', filterStr);
-        // listKeywords(filterStr).then(data => {
-        //     setKeywords(data.rows);
-        //     setPageInfo({ totalPagination: Math.ceil(data.count / LIMIT_PER_PAGE), currentPage: parseInt(currentPage) });
-        //     setIsLoading(false);
-        // });
-
         const currentPage = e.target.getAttribute('value');
         handleFetchKeywordData(currentPage);
     }

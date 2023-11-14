@@ -4,23 +4,23 @@ dotenv.config();
 export default {
   port: process.env.PORT || 8081,
   nodeEnv: process.env.NODE_ENV || 'development',
-  fileServerHost: process.env.FILE_SERVER_HOST || 'development',
+  fileServerHost: process.env.FILE_SERVER_HOST || 'kewe_file_service:8082',
   database: {
-    dialect: process.env.DB_DIALECT,
-    dbHost: process.env.DB_HOST,
-    dbUser: process.env.DB_USER,
-    dbPassword: process.env.DB_PASS,
-    dbName: process.env.DB_NAME,
-    dbPort: process.env.DB_PORT,
+    dialect: process.env.DB_DIALECT || 'postgres',
+    dbHost: process.env.DB_HOST || 'postgres_service',
+    dbUser: process.env.DB_USER || 'postgres',
+    dbPassword: process.env.DB_PASS || 'postgres',
+    dbName: process.env.DB_NAME || 'kewe_crawling',
+    dbPort: process.env.DB_PORT || 5432,
   },
   memCache: {
-    host: process.env.REDIS_HOST,
-    port: process.env.REDIS_PORT,
+    host: process.env.REDIS_HOST || 'caching_service',
+    port: process.env.REDIS_PORT || 6379,
   },
   messageQueue: {
-    amqpHost: process.env.AMQP_HOST,
-    amqpPort: process.env.AMQP_PORT,
-    amqpUser: process.env.AMQP_USER,
-    amqpPassword: process.env.AMQP_PASSWORD,
+    amqpHost: process.env.AMQP_HOST || 'rabbitmq_service',
+    amqpPort: process.env.AMQP_PORT || 5672,
+    amqpUser: process.env.AMQP_USER || 'admin',
+    amqpPassword: process.env.AMQP_PASSWORD || 'admin',
   }
 }

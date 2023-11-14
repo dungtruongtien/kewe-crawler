@@ -18,7 +18,7 @@ export function ProtectedPage({ children }) {
 	}, [])
 
 
-	if (!userInfo && !userId) {
+	if (!userId) {
 		return <Navigate to="/login" />;
 	} else {
 		return children;

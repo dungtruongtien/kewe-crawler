@@ -7,7 +7,10 @@ import { del, get, set } from '../client/redis.client';
 
 export const crawlerConsumer = async ({ keyword, userId, trackingKey }) => {
   // Call API to google.com
-  const browser = await puppeteer.launch({ headless: "new" });
+  const browser = await puppeteer.launch({ 
+    args: ['--no-sandbox'], // Required.
+    headless: "new" 
+  });
   const page = await browser.newPage();
 
   // Navigate to the URL
@@ -105,7 +108,7 @@ const uploadFile = async (userId, html) => {
   let requestConfig = {
     method: 'post',
     maxBodyLength: Infinity,
-    url: `${config.fileServerHost}/file/upload`,
+    url: `http://${config.fileServerHost}/file/upload`,
     headers: {
       'Content-Type': 'application/json'
     },

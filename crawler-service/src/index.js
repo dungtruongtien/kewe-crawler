@@ -20,6 +20,7 @@ sequelizeService.init().then(async () => {
       channel.prefetch(1);
       console.log(" [*] Waiting for messages in %s. To exit press CTRL+C", queue);
       channel.consume(queue, function (msg) {
+        // Delay 3s between each search, prevent Google marks this crawler service as bot.
         try {
           setTimeout(async() => {
             console.log(" [x] Received %s", msg.content.toString());
@@ -27,7 +28,7 @@ sequelizeService.init().then(async () => {
             await crawlerConsumer(data);
             channel.ack(msg);
             console.log('Consumer DONE');
-          }, 5000);
+          }, 2000);
         } catch (error) {
           //TODO: define rule to send ack or not, currently dont send ack when consumer failed
         }
