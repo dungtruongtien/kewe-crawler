@@ -4,7 +4,7 @@ import { subMinutes } from 'date-fns';
 const API_PUBLIC_PATHS = ['/auth/v1/token/access', '/auth/v1/token/login', '/auth/v1/token/logout']
 
 const instance = axios.create({
-  baseURL: 'http://localhost:8081/api/',
+  baseURL: `${process.env.REACT_APP_API_SERVICE}/api/`,
   timeout: 5000,
 });
 

@@ -26,7 +26,7 @@ async function startApp() {
   await bootstrap(app);
 
   const corsOptions = {
-    origin: 'http://localhost:3000',
+    origin: config.interfaceEndpoint,
   };
 
   app.use(logger('dev'));
